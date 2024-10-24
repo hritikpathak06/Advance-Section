@@ -19,7 +19,7 @@ app.use(morgan('dev'))
 
 
   app.get('/', (req, res) => {
-    res.send('Hello, World!');
+    res.send('Hello, Auth!');
   });
 
   // your routes here
@@ -32,7 +32,7 @@ app.use(morgan('dev'))
     });
   });
 
-  app.use(errorMiddleware);
+  app.use(errorMiddleware as any);
   
   
   app.listen(port, () => console.log('Server is working on Port:'+port+' in '+envMode+' Mode.'));
