@@ -2,11 +2,12 @@ version: '3.8'
 
 services:
   nodeapp:
-    image: dockertutapp
+    build: 
+      context: ./myapp
+      dockerfile: Dockerfile
     container_name: samplewala
     environment:
       - PORT=4000
-      # Uncomment and set your MongoDB URI if needed
       - MONGO_URI=mongodb://admin:password@mongodb
     ports:
       - "4000:4000"
@@ -17,13 +18,17 @@ services:
     image: mongo
     container_name: dockertutDB
     ports:
-      - "27017:27017"
+      - "27071:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - dockertut-data:/data/db  # Use the shared volume here
 
   authservice:
-    image: auth
+    build: 
+      context: ./auth
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     depends_on:
@@ -32,11 +37,24 @@ services:
       - PORT=5000
 
   nextjsservice:
-    image: nextjs 
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - SERVER_URL=http://nodeapp:4000
     depends_on:
       - nodeapp
       - mongodb
       - authservice
- 
+    develop:
+      
+    
+    
+    # volumes:
+    #   - ./client:/app
+
+volumes:
+  dockertut-data:  # Define the volume here
+    driver: local

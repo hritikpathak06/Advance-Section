@@ -24,12 +24,43 @@ app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
 
-const createUser = async () => {
-  await User.create({
-    name: "John2 Doe",
-    email: "johndoe2@gmail.com",
+import { Request, Response } from "express";
+
+// Updated createUser function
+const createUser = async (name: string, email: string) => {
+  return await User.create({
+    name,
+    email,
   });
 };
+
+// Update the types for req and res in the route handler
+app.get("/api/newuser", async (req: any, res: any) => {
+  try {
+    const name = req.query.name as string;
+    const email = req.query.email as string;
+
+    if (!name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and email are required",
+      });
+    }
+
+    const user = await createUser(name, email);
+
+    return res.json({
+      success: true,
+      user,
+    });
+  } catch (error:any) {
+    return res.status(500).json({
+      success: false,
+      message: "Error creating user",
+      error: error.message,
+    });
+  }
+});
 
 // createUser();
 
